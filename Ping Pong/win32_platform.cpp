@@ -80,40 +80,57 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
         while (PeekMessage(&message, window, 0, 0, PM_REMOVE)) {
 
             switch (message.message) {
-                case WM_KEYUP:
-                case WM_KEYDOWN: {
-                     u32 vk_code = (u32)message.wParam;
-                       bool is_down = ((message.lParam & (1 << 31)) == 0);
-
-#define process_button(b, vk)\
-case vk: {\          
+            case WM_KEYUP:
+            case WM_KEYDOWN: {
+                u32 vk_code = (u32)message.wParam;
+                bool is_down = ((message.lParam & (1 << 31)) == 0);
+//#define process_button(b,vk)\
+//case vk:{\          
+//input.buttons[b].is_down = is_down;\
+//input.buttons[b].changed = true;\
+//} break;
+//
+//                switch (vk_code) {
+//                    process_button(BUTTON_UP, VK_UP);
+//                }
+//                } break;
+//
+//            default: {
+//                TranslateMessage(&message);
+//                DispatchMessage(&message);
+//            }
+//            }
+#define process_button(b,vk)\
+case vk:{\
 input.buttons[b].is_down = is_down;\
 input.buttons[b].changed = true;\
-} break;
+}break;
 
-                    switch (vk_code) {
-                        process_button(BUTTON_UP, VK_UP);
-                    }
+
+
+                switch (vk_code) {
+                    process_button(BUTTON_UP, VK_UP);
+                }
                 } break;
 
-                default: {
-                    TranslateMessage(&message);
-                    DispatchMessage(&message);
-                }
+            default: {
+                TranslateMessage(&message);
+                DispatchMessage(&message);
             }
-        
+            }
+
+            }
+
+            //Simulate
+            simulate_game(&input);
+
+            //Render
+            StretchDIBits(hdc, 0, 0, render_state.width, render_state.height, 0, 0, render_state.width, render_state.height, render_state.memory, &render_state.bitmap_info, DIB_RGB_COLORS, SRCCOPY);
+
+
+
+
+
         }
 
-        //Simulate
-        simulate_game(&input);
-
-        //Render
-        StretchDIBits(hdc, 0, 0, render_state.width, render_state.height, 0, 0, render_state.width, render_state.height, render_state.memory, &render_state.bitmap_info, DIB_RGB_COLORS, SRCCOPY);
-
-
-
-
-
     }
-
-}
